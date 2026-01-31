@@ -123,6 +123,7 @@ Commands:
                     std::cout << "Invalid level number: " << level << ". Levels can range from 1 to 3." << std::endl;
                 }
             }
+            return 0;
         }
     }
     std::cout << "Invalid number of arguments: " << argc << ". For help enter: -help" << std::endl;
