@@ -15,10 +15,12 @@ static int level3_max_number = 100;
 std::string inputName()
 {
     std::string name;
-    while (true) {
+    while (true)
+    {
         std::cout << "Input your name: ";
         std::getline(std::cin, name);
-        if (!name.empty()) {
+        if (!name.empty())
+        {
             break;
         }
         std::cout << "name must be not empty" << std::endl;
@@ -27,9 +29,11 @@ std::string inputName()
 }
 
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
-    if (argc < 2) {
+    if (argc < 2)
+    {
         std::cout << "Input max number after key '-max'" << std::endl;
         return -1;
     }
@@ -38,9 +42,11 @@ int main(int argc, char** argv) {
         createFile(file_name);
     }
 
-    if (argc == 2) {
+    if (argc == 2)
+    {
         std::string arg1_value{ argv[1] };
-        if (arg1_value == "-table") {
+        if (arg1_value == "-table")
+        {
             std::cout << "*********************************" << std::endl;
             std::cout << "High scores table:" << std::endl;
             std::cout << readTableFromFile(file_name) << std::endl;
@@ -66,9 +72,11 @@ Commands:
         }
     }
 
-    if (argc == 3) {
+    if (argc == 3)
+    {
         std::string arg1_value{ argv[1] };
-        if (arg1_value == "-max") {
+        if (arg1_value == "-max")
+        {
             std::string name = inputName();
 
             int max_number = std::stoi(argv[2]);
@@ -78,10 +86,11 @@ Commands:
             writePointsToFile(name, points, file_name);
             return 0;
         }
-        if (arg1_value == "-level") {
+        if (arg1_value == "-level")
+        {
             int level = std::stoi(argv[2]);
-
-            switch (level) {
+            switch (level)
+            {
             case 1:
                 {
                     std::string name = inputName();

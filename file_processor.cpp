@@ -3,7 +3,8 @@
 
 #include "file_processor.h"
 
-bool fileExists(const std::string& filename) {
+bool fileExists(const std::string& filename)
+{
     std::ifstream file(filename);
     return file.good();
 }
@@ -13,8 +14,10 @@ std::string findStringWithName(const std::string& name, const std::string& filen
     std::ifstream file(filename);
     std::string line;
     std::string n;
-    if (file.is_open()) {
-        while (std::getline(file, line)) {
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
             n = line.substr(0, line.find(' '));
             if (n == name)
             {
@@ -32,8 +35,10 @@ void rewriteString(int points, const std::string& name, const std::string& filen
     std::string line;
     std::string lines;
     std::string n;
-    if (file.is_open()) {
-        while (std::getline(file, line)) {
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
             n = line.substr(0, line.find(' '));
             if (n == name)
             {
@@ -66,7 +71,8 @@ int getPointsFromString(const std::string& line)
     return stoi(number);
 }
 
-void writePointsToFile(const std::string& name, int points, const std::string& filename) {
+void writePointsToFile(const std::string& name, int points, const std::string& filename)
+{
     std::string string_with_name = findStringWithName(name, filename);
     if (points < getPointsFromString(string_with_name))
     {
@@ -74,7 +80,8 @@ void writePointsToFile(const std::string& name, int points, const std::string& f
         return;
     }
     std::ofstream f(filename, std::ios::app);
-    if (f.is_open()) {
+    if (f.is_open())
+    {
         f << name << " " << points << "\n";
     }
     f.close();
@@ -82,32 +89,42 @@ void writePointsToFile(const std::string& name, int points, const std::string& f
 
 
 
-std::string readTableFromFile(const std::string& filename) {
+std::string readTableFromFile(const std::string& filename)
+{
     std::ifstream file(filename);
     std::string table;
     std::string line;
-    if (file.is_open()) {
-        while (std::getline(file, line)) {
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
             table.append(line).append("\n");
         }
     }
     return table;
 }
 
-void createFile(const std::string& filename) {
+void createFile(const std::string& filename)
+{
     std::ofstream file(filename);
-    if (file.is_open()) {
+    if (file.is_open())
+    {
         file.close();
-    } else {
+    }
+    else
+    {
         std::cerr << "Failed to create a file " << filename << std::endl;
     }
 }
 
-void createFileItNotExist(const std::string& filename) {
-    if (fileExists(file_name)) {
+void createFileItNotExist(const std::string& filename)
+{
+    if (fileExists(file_name))
+    {
         std::cout << "File " << file_name << " is exists." << std::endl;
     }
-    else {
+    else
+    {
         createFile(file_name);
     }
 }
