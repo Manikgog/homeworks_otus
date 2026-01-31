@@ -1,14 +1,13 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.2)
+project(guess_number)
 
-project(02.hello_world)
+set(CMAKE_CXX_STANDARD 20)
 
-add_executable(hello_world 
-    hello_world.cpp
-    move_me_out.cpp
-    move_me_out.h
-)
-
-set_target_properties(hello_world PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-)
+add_executable(guess_number 
+                main.cpp 
+                check_value.h 
+                check_value.cpp 
+                get_random_target.h 
+                get_random_target.cpp
+                file_processor.h
+                file_processor.cpp)
