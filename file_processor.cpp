@@ -62,12 +62,11 @@ void rewriteString(int points, const std::string& name, const std::string& filen
 
 int getPointsFromString(const std::string& line)
 {
-    int index_of_space = line.find(' ');
-    if (index_of_space == -1)
+    if (line.find(' ') == std::string::npos)
     {
         return -1;
     }
-    std::string number = line.substr(index_of_space, line.length());
+    std::string number = line.substr(line.find(' ')+1);
     return stoi(number);
 }
 
@@ -119,12 +118,12 @@ void createFile(const std::string& filename)
 
 void createFileItNotExist(const std::string& filename)
 {
-    if (fileExists(file_name))
+    if (fileExists(filename))
     {
-        std::cout << "File " << file_name << " is exists." << std::endl;
+        std::cout << "File " << filename << " is exists." << std::endl;
     }
     else
     {
-        createFile(file_name);
+        createFile(filename);
     }
 }
