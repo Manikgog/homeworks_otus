@@ -29,6 +29,33 @@ std::string inputName()
 }
 
 
+void gameProcess(const std::string& statistic_file_name, int max_number)
+{
+    std::string name = inputName();
+    if (!fileExists(statistic_file_name))
+    {
+        createFile(statistic_file_name);
+    }
+    int target_number = getRandomTarget(max_number);
+    int points = checkValue(target_number);
+    writePointsToFile(name, points, statistic_file_name);
+}
+
+void processTableVariant()
+{
+    std::cout << "*********************************" << std::endl;
+    std::cout << "High scores table:" << std::endl;
+    std::cout << readTableFromFile(file_name) << std::endl;
+    std::cout << "High scores level 1 table:" << std::endl;
+    std::cout << readTableFromFile(file_name_level1) << std::endl;
+    std::cout << "High scores level 2 table:" << std::endl;
+    std::cout << readTableFromFile(file_name_level2) << std::endl;
+    std::cout << "High scores level 3 table:" << std::endl;
+    std::cout << readTableFromFile(file_name_level3) << std::endl;
+    std::cout << "*********************************" << std::endl;
+}
+
+
 int main(int argc, char** argv)
 {
 
@@ -47,16 +74,7 @@ int main(int argc, char** argv)
         std::string arg1_value{ argv[1] };
         if (arg1_value == "-table")
         {
-            std::cout << "*********************************" << std::endl;
-            std::cout << "High scores table:" << std::endl;
-            std::cout << readTableFromFile(file_name) << std::endl;
-            std::cout << "High scores level 1 table:" << std::endl;
-            std::cout << readTableFromFile(file_name_level1) << std::endl;
-            std::cout << "High scores level 2 table:" << std::endl;
-            std::cout << readTableFromFile(file_name_level2) << std::endl;
-            std::cout << "High scores level 3 table:" << std::endl;
-            std::cout << readTableFromFile(file_name_level3) << std::endl;
-            std::cout << "*********************************" << std::endl;
+            processTableVariant();
             return 0;
         }
         if (arg1_value == "-help")
@@ -77,13 +95,7 @@ Commands:
         std::string arg1_value{ argv[1] };
         if (arg1_value == "-max")
         {
-            std::string name = inputName();
-
-            int max_number = std::stoi(argv[2]);
-            int target_number = getRandomTarget(max_number);
-
-            int points = checkValue(target_number);
-            writePointsToFile(name, points, file_name);
+            gameProcess(file_name, std::stoi(argv[2]));
             return 0;
         }
         if (arg1_value == "-level")
@@ -93,38 +105,17 @@ Commands:
             {
             case 1:
                 {
-                    std::string name = inputName();
-                    if (!fileExists(file_name_level1))
-                    {
-                        createFile(file_name_level1);
-                    }
-                    int target_number = getRandomTarget(level1_max_number);
-                    int points = checkValue(target_number);
-                    writePointsToFile(name, points, file_name_level1);
+                    gameProcess(file_name_level1, level1_max_number);
                     break;
                 }
             case 2:
                 {
-                    std::string name = inputName();
-                    if (!fileExists(file_name_level2))
-                    {
-                        createFile(file_name_level2);
-                    }
-                    int target_number = getRandomTarget(level2_max_number);
-                    int points = checkValue(target_number);
-                    writePointsToFile(name, points, file_name_level2);
+                    gameProcess(file_name_level2, level2_max_number);
                     break;
                 }
             case 3:
                 {
-                    std::string name = inputName();
-                    if (!fileExists(file_name_level3))
-                    {
-                        createFile(file_name_level3);
-                    }
-                    int target_number = getRandomTarget(level3_max_number);
-                    int points = checkValue(target_number);
-                    writePointsToFile(name, points, file_name_level3);
+                    gameProcess(file_name_level3, level3_max_number);
                     break;
                 }
             default:
