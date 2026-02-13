@@ -1,6 +1,8 @@
 #include "World.hpp"
+#include "Dust.hpp"
 #include "Painter.hpp"
 #include <fstream>
+#include <algorithm>
 
 // Длительность одного тика симуляции.
 // Подробнее см. update()
@@ -14,23 +16,7 @@ static constexpr double timePerTick = 0.001;
 World::World(const std::string& worldFilePath) {
 
     std::ifstream stream(worldFilePath);
-    /**
-     * TODO: хорошее место для улучшения.
-     * Чтение границ мира из модели
-     * Обратите внимание, что здесь и далее мы многократно
-     * читаем в объект типа Point, последовательно
-     * заполняя координаты x и у. Если что-то делаем
-     * многократно - хорошо бы вынести это в функцию
-     * и не дублировать код...
-     */
     readBoxFromStream(stream);
-
-    /**
-     * TODO: хорошее место для улучшения.
-     * (x, y) и (vx, vy) - составные части объекта, также
-     * как и (red, green, blue). Опять же, можно упростить
-     * этот код, научившись читать сразу Point, Color...
-     */
 
     Point center;
     Point speed;
@@ -46,23 +32,10 @@ World::World(const std::string& worldFilePath) {
         stream >> center >> speed;
         // Читаем три составляющие цвета шара
         stream >> color;
-        //Color color(red, green, blue);
         // Читаем радиус шара
         stream >> radius;
-        // Читаем свойство шара isCollidable, которое
-        // указывает, требуется ли обрабатывать пересечение
-        // шаров как столкновение. Если true - требуется.
-        // В базовой части задания этот параметр
         stream >> std::boolalpha >> isCollidable;
-
-        // TODO: место для доработки.
-        // Здесь не хватает самого главного - создания
-        // объекта класса Ball со свойствами, прочитанными
-        // выше, и его помещения в контейнер balls
         Ball ball(Velocity(speed), center, color, radius, isCollidable);
-        // После того как мы каким-то образом
-        // сконструируем объект Ball ball;
-        // добавьте его в конец контейнера вызовом
         balls.push_back(ball);
     }
 }
@@ -76,6 +49,10 @@ void World::show(Painter& painter) const {
     // Вызываем отрисовку каждого шара
     for (const Ball& ball : balls) {
         ball.draw(painter);
+    }
+
+    for (const Dust& dust : dustParticles) {
+        dust.draw(painter);
     }
 }
 
@@ -101,7 +78,26 @@ void World::update(double time) {
     const auto ticks = static_cast<size_t>(std::floor(time / timePerTick));
     restTime = time - double(ticks) * timePerTick;
 
-    physics.update(balls, ticks);
+    physics.update(balls, dustParticles, ticks);
+
+    for (size_t i = 0; i < ticks; ++i) {
+        updateDust(timePerTick);
+    }
+}
+
+
+
+void World::updateDust(double timePerTick) {
+    // Обновляем все частицы
+    for (auto& dust : dustParticles) {
+        dust.update(timePerTick);
+    }
+
+    dustParticles.erase(
+        std::remove_if(dustParticles.begin(), dustParticles.end(),
+            [](const Dust& d) { return !d.isAlive(); }),
+        dustParticles.end()
+    );
 }
 
 

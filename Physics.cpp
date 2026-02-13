@@ -11,16 +11,16 @@ void Physics::setWorldBox(const Point& topLeft, const Point& bottomRight) {
     this->bottomRight = bottomRight;
 }
 
-void Physics::update(std::vector<Ball>& balls, const size_t ticks) const {
+void Physics::update(std::vector<Ball>& balls, std::vector<Dust>& dustParticles, const size_t ticks) const {
 
     for (size_t i = 0; i < ticks; ++i) {
         move(balls);
         collideWithBox(balls);
-        collideBalls(balls);
+        collideBalls(balls, dustParticles);
     }
 }
 
-void Physics::collideBalls(std::vector<Ball>& balls) const {
+void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dustParticles) const {
     for (auto a = balls.begin(); a != balls.end(); ++a) {
         for (auto b = std::next(a); b != balls.end(); ++b) {
             const double distanceBetweenCenters2 =
@@ -32,7 +32,7 @@ void Physics::collideBalls(std::vector<Ball>& balls) const {
             if (distanceBetweenCenters2 < collisionDistance2
                 && a->isCollidable()
                 && b->isCollidable()) {
-                processCollision(*a, *b, distanceBetweenCenters2);
+                processCollision(*a, *b, distanceBetweenCenters2, dustParticles);
             }
         }
     }
@@ -74,7 +74,7 @@ void Physics::move(std::vector<Ball>& balls) const {
 
 
 
-void Physics::processCollision(Ball& a, Ball& b, double distanceBetweenCenters2) const {
+void Physics::processCollision(Ball& a, Ball& b, double distanceBetweenCenters2, std::vector<Dust>& dustParticles) const {
     // нормированный вектор столкновения
     const Point normal =
         (b.getCenter() - a.getCenter()) / std::sqrt(distanceBetweenCenters2);
@@ -90,5 +90,21 @@ void Physics::processCollision(Ball& a, Ball& b, double distanceBetweenCenters2)
     // задаем новые скорости мячей после столкновения
     a.setVelocity(Velocity(aV - normal * p * a.getMass()));
     b.setVelocity(Velocity(bV + normal * p * b.getMass()));
-}
 
+    Point collisionPoint = (a.getCenter() + b.getCenter()) * 0.5;
+    Color mixedColor(
+        255,
+        0,
+        0
+    );
+
+    // Создаем несколько частиц, разлетающихся в разные стороны
+    const int particleCount = 8;
+    for (int i = 0; i < particleCount; ++i) {
+        double angle = (2 * M_PI * i) / particleCount;
+        double speed = std::sqrt(dot(aV - bV, aV - bV)) * 0.5;
+        Velocity particleVelocity(speed, angle);
+        double lifetime = 0.3 + (std::rand() % 5)/5.0;
+        dustParticles.emplace_back(collisionPoint, particleVelocity, mixedColor, lifetime);
+    }
+}
