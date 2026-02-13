@@ -29,12 +29,16 @@ void Physics::collideBalls(std::vector<Ball>& balls) const {
             const double collisionDistance2 =
                 collisionDistance * collisionDistance;
 
-            if (distanceBetweenCenters2 < collisionDistance2) {
+            if (distanceBetweenCenters2 < collisionDistance2
+                && a->isCollidable()
+                && b->isCollidable()) {
                 processCollision(*a, *b, distanceBetweenCenters2);
             }
         }
     }
 }
+
+
 
 void Physics::collideWithBox(std::vector<Ball>& balls) const {
     for (Ball& ball : balls) {
@@ -44,18 +48,21 @@ void Physics::collideWithBox(std::vector<Ball>& balls) const {
         auto isOutOfRange = [](double v, double lo, double hi) {
             return v < lo || v > hi;
         };
-
-        if (isOutOfRange(p.x, topLeft.x + r, bottomRight.x - r)) {
-            Point vector = ball.getVelocity().vector();
-            vector.x = -vector.x;
-            ball.setVelocity(vector);
-        } else if (isOutOfRange(p.y, topLeft.y + r, bottomRight.y - r)) {
-            Point vector = ball.getVelocity().vector();
-            vector.y = -vector.y;
-            ball.setVelocity(vector);
+        if (ball.isCollidable()) {
+            if (isOutOfRange(p.x, topLeft.x + r, bottomRight.x - r)) {
+                Point vector = ball.getVelocity().vector();
+                vector.x = -vector.x;
+                ball.setVelocity(vector);
+            } else if (isOutOfRange(p.y, topLeft.y + r, bottomRight.y - r)) {
+                Point vector = ball.getVelocity().vector();
+                vector.y = -vector.y;
+                ball.setVelocity(vector);
+            }
         }
     }
 }
+
+
 
 void Physics::move(std::vector<Ball>& balls) const {
     for (Ball& ball : balls) {
@@ -65,8 +72,9 @@ void Physics::move(std::vector<Ball>& balls) const {
     }
 }
 
-void Physics::processCollision(Ball& a, Ball& b,
-                               double distanceBetweenCenters2) const {
+
+
+void Physics::processCollision(Ball& a, Ball& b, double distanceBetweenCenters2) const {
     // нормированный вектор столкновения
     const Point normal =
         (b.getCenter() - a.getCenter()) / std::sqrt(distanceBetweenCenters2);
@@ -83,3 +91,4 @@ void Physics::processCollision(Ball& a, Ball& b,
     a.setVelocity(Velocity(aV - normal * p * a.getMass()));
     b.setVelocity(Velocity(bV + normal * p * b.getMass()));
 }
+

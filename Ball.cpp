@@ -1,20 +1,53 @@
-#include "Ball.hpp"
 #include <cmath>
+#include "Ball.hpp"
+
+
+Ball::Ball()
+    : velocity_(Velocity())
+    , center_(Point())
+    , color_(Color())
+    , radius_(0)
+    , isCollidable_(false)
+{}
+
+
+Ball::Ball(const Velocity& velocity
+    , const Point& center
+    , const Color& color
+    , const double radius
+    , const bool isCollidable)
+    : velocity_(velocity)
+    , center_(center)
+    , color_(color)
+    , radius_(radius)
+    , isCollidable_(isCollidable)
+{}
+
+Ball::Ball(const double vx , const double vy
+    , const double x , const double y
+    , const int red, const int green, const int blue
+    , const double radius
+    , const bool isCollidable)
+        : velocity_(Velocity(Point(vx, vy)))
+        , center_(Point(x, y))
+        , color_(Color(red, green, blue))
+        , radius_(radius)
+        , isCollidable_(isCollidable)
+{}
 
 /**
  * Задает скорость объекта
  * @param velocity новое значение скорости
  */
 void Ball::setVelocity(const Velocity& velocity) {
-    // TODO: место для доработки
+    velocity_ = velocity;
 }
 
 /**
  * @return скорость объекта
  */
 Velocity Ball::getVelocity() const {
-    // TODO: место для доработки
-    return {};
+    return velocity_;
 }
 
 /**
@@ -26,7 +59,7 @@ Velocity Ball::getVelocity() const {
  * @param painter контекст отрисовки
  */
 void Ball::draw(Painter& painter) const {
-    // TODO: место для доработки
+    painter.draw(center_, radius_, color_);
 }
 
 /**
@@ -34,15 +67,14 @@ void Ball::draw(Painter& painter) const {
  * @param center новый центр объекта
  */
 void Ball::setCenter(const Point& center) {
-    // TODO: место для доработки
+    center_ = center;
 }
 
 /**
  * @return центр объекта
  */
 Point Ball::getCenter() const {
-    // TODO: место для доработки
-    return {};
+    return center_;
 }
 
 /**
@@ -51,8 +83,7 @@ Point Ball::getCenter() const {
  * не требуется
  */
 double Ball::getRadius() const {
-    // TODO: место для доработки
-    return {};
+    return radius_;
 }
 
 /**
@@ -63,6 +94,13 @@ double Ball::getRadius() const {
  * эквивалентна объему: PI * radius^3 * 4. / 3.
  */
 double Ball::getMass() const {
-    // TODO: место для доработки
-    return {};
+    return M_PI * std::pow(radius_,3) * 4. / 3;
+}
+
+bool Ball::isCollidable() const {
+    return isCollidable_;
+}
+
+Color Ball::getColor() {
+    return color_;
 }

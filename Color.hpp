@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 class Color {
   public:
     Color();
@@ -13,3 +15,13 @@ class Color {
     double g{};
     double b{};
 };
+
+inline std::istream& operator>>(std::istream& is, Color& p) {
+  double red;
+  double green;
+  double blue;
+  is >> red >> green >> blue;
+  Color color(red, green, blue);
+  p = color;
+  return is;
+}

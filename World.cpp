@@ -23,8 +23,7 @@ World::World(const std::string& worldFilePath) {
      * многократно - хорошо бы вынести это в функцию
      * и не дублировать код...
      */
-    stream >> topLeft.x >> topLeft.y >> bottomRight.x >> bottomRight.y;
-    physics.setWorldBox(topLeft, bottomRight);
+    readBoxFromStream(stream);
 
     /**
      * TODO: хорошее место для улучшения.
@@ -32,16 +31,11 @@ World::World(const std::string& worldFilePath) {
      * как и (red, green, blue). Опять же, можно упростить
      * этот код, научившись читать сразу Point, Color...
      */
-    double x;
-    double y;
-    double vx;
-    double vy;
+
+    Point center;
+    Point speed;
+    Color color;
     double radius;
-
-    double red;
-    double green;
-    double blue;
-
     bool isCollidable;
 
     // Здесь не хватает обработки ошибок, но на текущем
@@ -49,9 +43,10 @@ World::World(const std::string& worldFilePath) {
     while (stream.peek(), stream.good()) {
         // Читаем координаты центра шара (x, y) и вектор
         // его скорости (vx, vy)
-        stream >> x >> y >> vx >> vy;
+        stream >> center >> speed;
         // Читаем три составляющие цвета шара
-        stream >> red >> green >> blue;
+        stream >> color;
+        //Color color(red, green, blue);
         // Читаем радиус шара
         stream >> radius;
         // Читаем свойство шара isCollidable, которое
@@ -64,11 +59,11 @@ World::World(const std::string& worldFilePath) {
         // Здесь не хватает самого главного - создания
         // объекта класса Ball со свойствами, прочитанными
         // выше, и его помещения в контейнер balls
-
+        Ball ball(Velocity(speed), center, color, radius, isCollidable);
         // После того как мы каким-то образом
         // сконструируем объект Ball ball;
         // добавьте его в конец контейнера вызовом
-        // balls.push_back(ball);
+        balls.push_back(ball);
     }
 }
 
@@ -107,4 +102,11 @@ void World::update(double time) {
     restTime = time - double(ticks) * timePerTick;
 
     physics.update(balls, ticks);
+}
+
+
+
+void World::readBoxFromStream(std::ifstream& stream) {
+    stream >> topLeft.x >> topLeft.y >> bottomRight.x >> bottomRight.y;
+    physics.setWorldBox(topLeft, bottomRight);
 }

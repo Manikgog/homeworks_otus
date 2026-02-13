@@ -8,11 +8,12 @@ class Painter;
 
 class World {
   public:
-    World(const std::string& worldFilePath);
+    explicit World(const std::string& worldFilePath);
     void show(Painter& painter) const;
     void update(double time);
 
   private:
+    void readBoxFromStream(std::ifstream& stream);
     // Границы мира заданы углами прямоугольника
     Point topLeft;
     Point bottomRight;
