@@ -45,6 +45,7 @@ void Application::updateWorld(World& world) {
     if (totalTime < 10.) {
         world.update(delta);
     }
+
 }
 
 void Application::drawWorld(const World& world) {
