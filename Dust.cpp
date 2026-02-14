@@ -26,7 +26,7 @@ void Dust::draw(Painter& painter) const {
     );
 
     // Радиус частицы также уменьшаем со временем
-    double radius = 1.5 * (lifetime_ / 0.5);
+    double radius = 1.5 * (lifetime_ / 0.1);
     if (radius < 0.5) radius = 0.5;
 
     painter.draw(center_, radius, fadedColor);
