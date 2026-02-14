@@ -6,7 +6,14 @@ class Velocity {
   public:
     inline Velocity() = default;
 
-    // TODO: комментарии
+    /**
+     * @brief Конструктор скорости, заданной модулем и направлением.
+     * 
+     * Вычисляет компоненты скорости (x, y) на основе полярных координат.
+     * 
+     * @param abs Модуль скорости (абсолютная величина).
+     * @param angle Угол направления в радианах, отсчитываемый от оси X.
+     */    
     inline Velocity(double abs, double angle) {
         const double x = std::cos(angle);
         const double y = std::sin(angle);
