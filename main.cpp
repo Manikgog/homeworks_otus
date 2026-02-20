@@ -1,53 +1,35 @@
 #include <iostream>
-#include <limits>
+#include "min.h"
+#include "max.h"
+#include "mean.h"
+#include "stddev.h"
+#include "percentile.h"
 
-class IStatistics {
-public:
-	virtual ~IStatistics() {}
 
-	virtual void update(double next) = 0;
-	virtual double eval() const = 0;
-	virtual const char * name() const = 0;
-};
 
-class Min : public IStatistics {
-public:
-	Min() : m_min{std::numeric_limits<double>::min()} {
-	}
 
-	void update(double next) override {
-		if (next < m_min) {
-			m_min = next;
-		}
-	}
-
-	double eval() const override {
-		return m_min;
-	}
-
-	const char * name() const override {
-		return "min";
-	}
-
-private:
-	double m_min;
-};
 
 int main() {
 
-	const size_t statistics_count = 1;
+	const size_t statistics_count = 6;
 	IStatistics *statistics[statistics_count];
 
 	statistics[0] = new Min{};
+	statistics[1] = new Max{};
+	statistics[2] = new Mean{};
+	statistics[3] = new StdDev{};
+	statistics[4] = new Percentile90{};
+	statistics[5] = new Percentile95{};
 
 	double val = 0;
+
 	while (std::cin >> val) {
 		for (size_t i = 0; i < statistics_count; ++i) {
 			statistics[i]->update(val);
 		}
 	}
 
-	// Handle invalid input data
+	//Handle invalid input data
 	if (!std::cin.eof() && !std::cin.good()) {
 		std::cerr << "Invalid input data\n";
 		return 1;
