@@ -23,15 +23,16 @@ void Physics::update(std::vector<Ball>& balls, std::vector<Dust>& dustParticles,
 void Physics::collideBalls(std::vector<Ball>& balls, std::vector<Dust>& dustParticles) const {
     for (auto a = balls.begin(); a != balls.end(); ++a) {
         for (auto b = std::next(a); b != balls.end(); ++b) {
+            if(!a->isCollidable() || !b->isCollidable()) {
+                continue;
+            }
             const double distanceBetweenCenters2 =
                 distance2(a->getCenter(), b->getCenter());
             const double collisionDistance = a->getRadius() + b->getRadius();
             const double collisionDistance2 =
                 collisionDistance * collisionDistance;
 
-            if (distanceBetweenCenters2 < collisionDistance2
-                && a->isCollidable()
-                && b->isCollidable()) {
+            if (distanceBetweenCenters2 < collisionDistance2) {
                 processCollision(*a, *b, distanceBetweenCenters2, dustParticles);
             }
         }

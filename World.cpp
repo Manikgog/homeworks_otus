@@ -18,24 +18,11 @@ World::World(const std::string& worldFilePath) {
     std::ifstream stream(worldFilePath);
     readBoxFromStream(stream);
 
-    Point center;
-    Point speed;
-    Color color;
-    double radius;
-    bool isCollidable;
-
     // Здесь не хватает обработки ошибок, но на текущем
     // уровне прохождения курса нас это устраивает
     while (stream.peek(), stream.good()) {
-        // Читаем координаты центра шара (x, y) и вектор
-        // его скорости (vx, vy)
-        stream >> center >> speed;
-        // Читаем три составляющие цвета шара
-        stream >> color;
-        // Читаем радиус шара
-        stream >> radius;
-        stream >> std::boolalpha >> isCollidable;
-        Ball ball(Velocity(speed), center, color, radius, isCollidable);
+        Ball ball;
+        stream >> ball;
         balls.push_back(ball);
     }
 }

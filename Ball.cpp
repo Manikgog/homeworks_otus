@@ -3,37 +3,41 @@
 
 
 Ball::Ball()
-    : velocity_(Velocity())
-    , center_(Point())
-    , color_(Color())
+    : velocity_()
+    , center_()
+    , color_()
     , radius_(0)
     , isCollidable_(false)
+    , mass_(0.)
 {}
 
 
 Ball::Ball(const Velocity& velocity
     , const Point& center
     , const Color& color
-    , const double radius
-    , const bool isCollidable)
+    , double radius
+    , bool isCollidable)
     : velocity_(velocity)
     , center_(center)
     , color_(color)
     , radius_(radius)
     , isCollidable_(isCollidable)
+    , mass_(M_PI * std::pow(radius_,3) * 4. / 3)
 {}
 
-Ball::Ball(const double vx , const double vy
-    , const double x , const double y
-    , const int red, const int green, const int blue
-    , const double radius
-    , const bool isCollidable)
+Ball::Ball(double vx , double vy
+    , double x , double y
+    , int red, int green, int blue
+    , double radius
+    , bool isCollidable)
         : velocity_(Velocity(Point(vx, vy)))
         , center_(Point(x, y))
         , color_(Color(red, green, blue))
         , radius_(radius)
         , isCollidable_(isCollidable)
+        , mass_(M_PI * std::pow(radius_,3) * 4. / 3)
 {}
+
 
 /**
  * Задает скорость объекта
@@ -94,13 +98,13 @@ double Ball::getRadius() const {
  * эквивалентна объему: PI * radius^3 * 4. / 3.
  */
 double Ball::getMass() const {
-    return M_PI * std::pow(radius_,3) * 4. / 3;
+    return mass_;
 }
 
 bool Ball::isCollidable() const {
     return isCollidable_;
 }
 
-Color Ball::getColor() {
+Color Ball::getColor() const {
     return color_;
 }

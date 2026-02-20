@@ -9,10 +9,11 @@ class Ball {
     const Color     color_;
     const double    radius_;
     bool            isCollidable_;
+    const double          mass_;
 public:
     Ball();
-    Ball(const Velocity& velocity, const Point& center, const Color& color, const double radius, const bool isCollidable);
-    Ball(const double vx, const double vy, const double x, const double y, const int red, const int green, const int blue, const double radius, const bool isCollidable);
+    Ball(const Velocity& velocity, const Point& center, const Color& color, double radius, bool isCollidable);
+    Ball(double vx, double vy, double x, double y, int red, int green, int blue, double radius, bool isCollidable);
     void setVelocity(const Velocity& velocity);
     Velocity getVelocity() const;
     void draw(Painter& painter) const;
@@ -21,5 +22,21 @@ public:
     double getRadius() const;
     double getMass() const;
     bool isCollidable() const;
-    Color getColor();
+    Color getColor() const;
 };
+
+inline std::istream& operator>>(std::istream& is, Ball& ball) {
+    Point center;
+    Point speed;
+    Color color;
+    double radius;
+    bool isCollidable;
+    is >> center >> speed;
+    is >> color;
+    is >> radius;
+    is >> std::boolalpha >> isCollidable;
+    Ball newBall(Velocity(speed), center, color, radius, isCollidable);
+    ball.~Ball();
+    new (&ball) Ball(std::move(newBall));
+    return is;
+}
