@@ -14,6 +14,10 @@ public:
     Ball();
     Ball(const Velocity& velocity, const Point& center, const Color& color, double radius, bool isCollidable);
     Ball(double vx, double vy, double x, double y, int red, int green, int blue, double radius, bool isCollidable);
+    Ball(const Ball&) = delete;
+    Ball& operator=(Ball&) = delete;
+    Ball(Ball&& other) noexcept;
+    Ball& operator=(Ball&& other) noexcept;
     void setVelocity(const Velocity& velocity);
     Velocity getVelocity() const;
     void draw(Painter& painter) const;
@@ -35,8 +39,9 @@ inline std::istream& operator>>(std::istream& is, Ball& ball) {
     is >> color;
     is >> radius;
     is >> std::boolalpha >> isCollidable;
-    Ball newBall(Velocity(speed), center, color, radius, isCollidable);
-    ball.~Ball();
-    new (&ball) Ball(std::move(newBall));
+    
+    if (is) {
+        ball = Ball(speed, center, color, radius, isCollidable);
+    }
     return is;
 }

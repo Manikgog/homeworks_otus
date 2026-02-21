@@ -39,6 +39,25 @@ Ball::Ball(double vx , double vy
 {}
 
 
+Ball::Ball(Ball&& other) noexcept
+    : velocity_(std::move(other.velocity_))
+    , center_(std::move(other.center_))
+    , color_(other.color_)
+    , radius_(other.radius_)
+    , isCollidable_(other.isCollidable_)
+    , mass_(other.mass_)
+{}
+
+
+Ball& Ball::operator=(Ball&& other) noexcept {
+    if (this != &other) {
+        this->~Ball();
+        new (this) Ball(std::move(other));
+    }
+    return *this;
+}
+
+
 /**
  * Задает скорость объекта
  * @param velocity новое значение скорости

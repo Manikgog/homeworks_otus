@@ -1,0 +1,9 @@
+{
+    "cmake.debugConfig": {
+        "args": [
+            "~/homework_otus/homeworks_otus/data/smile.txt"
+        ],
+        "cwd": "${workspaceFolder}",
+        "environment": []
+    }
+}

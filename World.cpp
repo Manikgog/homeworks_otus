@@ -23,7 +23,7 @@ World::World(const std::string& worldFilePath) {
     while (stream.peek(), stream.good()) {
         Ball ball;
         stream >> ball;
-        balls.push_back(ball);
+        balls.push_back(std::move(ball));
     }
 }
 
