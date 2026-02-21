@@ -4,20 +4,20 @@
 #include "Velocity.hpp"
 
 class Ball {
-    Velocity        velocity_;
-    Point           center_;
-    const Color     color_;
-    const double    radius_;
-    bool            isCollidable_;
-    const double          mass_;
+    Velocity    velocity_;
+    Point       center_;
+    Color       color_;
+    double      radius_;
+    bool        isCollidable_;
+    double      mass_;
 public:
     Ball();
     Ball(const Velocity& velocity, const Point& center, const Color& color, double radius, bool isCollidable);
-    Ball(double vx, double vy, double x, double y, int red, int green, int blue, double radius, bool isCollidable);
-    Ball(const Ball&) = delete;
-    Ball& operator=(Ball&) = delete;
-    Ball(Ball&& other) noexcept;
-    Ball& operator=(Ball&& other) noexcept;
+    //Ball(double vx, double vy, double x, double y, int red, int green, int blue, double radius, bool isCollidable);
+    Ball(const Ball&) = default;
+    Ball& operator=(const Ball&) = default;
+    Ball(Ball&&) = delete;
+    Ball& operator=(Ball&&) = delete;
     void setVelocity(const Velocity& velocity);
     Velocity getVelocity() const;
     void draw(Painter& painter) const;
@@ -41,7 +41,8 @@ inline std::istream& operator>>(std::istream& is, Ball& ball) {
     is >> std::boolalpha >> isCollidable;
     
     if (is) {
-        ball = Ball(speed, center, color, radius, isCollidable);
+        Ball temp(speed, center, color, radius, isCollidable);
+        ball = temp;
     }
     return is;
 }

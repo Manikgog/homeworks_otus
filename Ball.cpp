@@ -25,37 +25,18 @@ Ball::Ball(const Velocity& velocity
     , mass_(M_PI * std::pow(radius_,3) * 4. / 3)
 {}
 
-Ball::Ball(double vx , double vy
-    , double x , double y
-    , int red, int green, int blue
-    , double radius
-    , bool isCollidable)
-        : velocity_(Velocity(Point(vx, vy)))
-        , center_(Point(x, y))
-        , color_(Color(red, green, blue))
-        , radius_(radius)
-        , isCollidable_(isCollidable)
-        , mass_(M_PI * std::pow(radius_,3) * 4. / 3)
-{}
-
-
-Ball::Ball(Ball&& other) noexcept
-    : velocity_(std::move(other.velocity_))
-    , center_(std::move(other.center_))
-    , color_(other.color_)
-    , radius_(other.radius_)
-    , isCollidable_(other.isCollidable_)
-    , mass_(other.mass_)
-{}
-
-
-Ball& Ball::operator=(Ball&& other) noexcept {
-    if (this != &other) {
-        this->~Ball();
-        new (this) Ball(std::move(other));
-    }
-    return *this;
-}
+// Ball::Ball(double vx , double vy
+//     , double x , double y
+//     , int red, int green, int blue
+//     , double radius
+//     , bool isCollidable)
+//         : velocity_(Velocity(Point(vx, vy)))
+//         , center_(Point(x, y))
+//         , color_(Color(red, green, blue))
+//         , radius_(radius)
+//         , isCollidable_(isCollidable)
+//         , mass_(M_PI * std::pow(radius_,3) * 4. / 3)
+// {}
 
 
 /**
