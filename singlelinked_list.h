@@ -8,7 +8,7 @@
 
 template <typename Type>
 class SingleLinkedList {
-    // Узел списка
+
     struct Node {
         Node() = default;
         Node(const Type& val, Node* next)
@@ -82,6 +82,9 @@ public:
     Iterator InsertAfter(ConstIterator pos, const Type& value);
     void PopFront() noexcept;
     Iterator EraseAfter(ConstIterator pos) noexcept;
+
+    Type& operator[](size_t i);
+    const Type& operator[](size_t i) const;
 
 private:
     Node head_;
@@ -305,6 +308,23 @@ SingleLinkedList<Type>::EraseAfter(ConstIterator pos) noexcept {
     delete node_to_delete;
     --size_;
     return Iterator(pos.node_->next_node);
+}
+
+template <typename Type>
+Type& SingleLinkedList<Type>::operator[](size_t i)
+{
+    if (i >= this->size_) {
+        throw std::out_of_range("SingleLinkedList out of range");
+    }
+    auto it = begin();
+    std::advance(it, i);
+    return *it;
+}
+
+template <typename Type>
+const Type& SingleLinkedList<Type>::operator[](size_t i) const
+{
+    return this->operator[](i);
 }
 
 template <typename Type>

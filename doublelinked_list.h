@@ -3,13 +3,12 @@
 #include <cassert>
 #include <cstddef>
 #include <string>
-#include <utility>
 #include <exception>
 #include <algorithm>
 
 template <typename Type>
 class DoubleLinkedList {
-    // Узел двусвязного списка
+
     struct Node {
         Node() = default;
         Node(const Type& val, Node* prev, Node* next)
@@ -50,12 +49,12 @@ class DoubleLinkedList {
         [[nodiscard]] reference operator*() const noexcept;
         [[nodiscard]] pointer operator->() const noexcept;
 
-    private:
+
         Node* node_ = nullptr;
     };
 
 public:
-    DoubleLinkedList() = default;
+    DoubleLinkedList();
     DoubleLinkedList(std::initializer_list<Type> values);
     DoubleLinkedList(const DoubleLinkedList& other);
     DoubleLinkedList& operator=(const DoubleLinkedList& rhs);
@@ -86,12 +85,19 @@ public:
     void PopFront() noexcept;
     void PopBack() noexcept;
     void Clear() noexcept;
-    [[nodiscard]] size_t GetSize() const noexcept;
+    [[nodiscard]] size_t Size() const noexcept;
     [[nodiscard]] bool IsEmpty() const noexcept;
     void swap(DoubleLinkedList& other) noexcept;
 
+    [[nodiscard]] Iterator before_begin() noexcept;
+    [[nodiscard]] ConstIterator cbefore_begin() const noexcept;
+    [[nodiscard]] ConstIterator before_begin() const noexcept;
+
     Iterator Insert(ConstIterator pos, const Type& value);
     Iterator Erase(ConstIterator pos) noexcept;
+
+    Type& operator[](size_t i);
+    const Type& operator[](size_t i) const;
 
 private:
     Node head_;  // фиктивный узел (перед первым элементом)
@@ -177,7 +183,7 @@ template <typename Type>
 template <typename ValueType>
 typename DoubleLinkedList<Type>::template BasicIterator<ValueType>::reference
 DoubleLinkedList<Type>::BasicIterator<ValueType>::operator*() const noexcept {
-    assert(node_ != nullptr && node_ != &this->head_ && node_ != &this->tail_ && "Dereferencing null or sentinel iterator");
+    assert(node_ != nullptr && "Dereferencing null or sentinel iterator");
     return node_->value;
 }
 
@@ -185,17 +191,21 @@ template <typename Type>
 template <typename ValueType>
 typename DoubleLinkedList<Type>::template BasicIterator<ValueType>::pointer
 DoubleLinkedList<Type>::BasicIterator<ValueType>::operator->() const noexcept {
-    assert(node_ != nullptr && node_ != &this->head_ && node_ != &this->tail_ && "Dereferencing null or sentinel iterator");
+    assert(node_ != nullptr && "Dereferencing null or sentinel iterator");
     return &node_->value;
 }
 
-// Реализации методов DoubleLinkedList
 template <typename Type>
 void DoubleLinkedList<Type>::InitEmpty() {
     head_.next_node = &tail_;
     tail_.prev_node = &head_;
     head_.prev_node = nullptr;
     tail_.next_node = nullptr;
+}
+
+template <typename Type>
+DoubleLinkedList<Type>::DoubleLinkedList() {
+    InitEmpty();
 }
 
 template <typename Type>
@@ -313,7 +323,11 @@ void DoubleLinkedList<Type>::PopFront() noexcept {
     assert(!IsEmpty() && "List is empty");
     Node* first_node = head_.next_node;
     head_.next_node = first_node->next_node;
-    first_node->next_node->prev_node = &head_;
+    if (first_node->next_node != &tail_) {
+        first_node->next_node->prev_node = &head_;
+    } else {
+        tail_.prev_node = &head_;
+    }
     delete first_node;
     --size_;
 }
@@ -336,7 +350,7 @@ void DoubleLinkedList<Type>::Clear() noexcept {
 }
 
 template <typename Type>
-size_t DoubleLinkedList<Type>::GetSize() const noexcept {
+size_t DoubleLinkedList<Type>::Size() const noexcept {
     return size_;
 }
 
@@ -367,14 +381,28 @@ void DoubleLinkedList<Type>::swap(DoubleLinkedList& other) noexcept {
     }
 }
 
+template<typename Type>
+typename DoubleLinkedList<Type>::Iterator DoubleLinkedList<Type>::before_begin() noexcept {
+    return Iterator(&head_);
+}
+
+template<typename Type>
+typename DoubleLinkedList<Type>::ConstIterator DoubleLinkedList<Type>::cbefore_begin() const noexcept {
+    return ConstIterator(const_cast<Node*>(&head_));
+}
+
+template<typename Type>
+typename DoubleLinkedList<Type>::ConstIterator DoubleLinkedList<Type>::before_begin() const noexcept {
+    return cbefore_begin();
+}
+
 template <typename Type>
 typename DoubleLinkedList<Type>::Iterator
 DoubleLinkedList<Type>::Insert(ConstIterator pos, const Type& value) {
     assert(pos.node_ != nullptr && "Insert called with null iterator");
     Node* current = const_cast<Node*>(pos.node_);
-    Node* new_node = new Node(value, current->prev_node, current);
-    current->prev_node->next_node = new_node;
-    current->prev_node = new_node;
+    Node* new_node = new Node(value, current, current->next_node);
+    current->next_node = new_node;
     ++size_;
     return Iterator(new_node);
 }
@@ -382,6 +410,7 @@ DoubleLinkedList<Type>::Insert(ConstIterator pos, const Type& value) {
 template <typename Type>
 typename DoubleLinkedList<Type>::Iterator
 DoubleLinkedList<Type>::Erase(ConstIterator pos) noexcept {
+    auto address_head = &head_;
     assert(pos.node_ != nullptr && pos.node_ != &head_ && pos.node_ != &tail_ && "Erase called with invalid iterator");
     Node* current = const_cast<Node*>(pos.node_);
     Node* next_node = current->next_node;
@@ -392,13 +421,38 @@ DoubleLinkedList<Type>::Erase(ConstIterator pos) noexcept {
     return Iterator(next_node);
 }
 
-// Операторы сравнения
+
+template <typename Type>
+Type& DoubleLinkedList<Type>::operator[](size_t i)
+{
+    if (i >= size_) {
+        throw std::out_of_range("DoubleLinkedList out of range");
+    }
+
+    if (i < size_ / 2) {
+        auto it = begin();
+        std::advance(it, i);
+        return *it;
+    } else {
+        auto it = rbegin();
+        std::advance(it, size_ - i - 1);
+        return *it;
+    }
+}
+
+template <typename Type>
+const Type& DoubleLinkedList<Type>::operator[](size_t i) const
+{
+    return this->operator[](i);
+}
+
+
 template <typename Type>
 bool operator==(const DoubleLinkedList<Type>& lhs, const DoubleLinkedList<Type>& rhs) {
     if (&lhs == &rhs) {
         return true;
     }
-    return lhs.GetSize() == rhs.GetSize() &&
+    return lhs.Size() == rhs.Size() &&
            std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
@@ -431,3 +485,4 @@ template <typename Type>
 bool operator>=(const DoubleLinkedList<Type>& lhs, const DoubleLinkedList<Type>& rhs) {
     return !(lhs < rhs);
 }
+
