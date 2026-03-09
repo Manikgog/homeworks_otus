@@ -70,8 +70,9 @@ public:
     [[nodiscard]] ConstIterator cend() const noexcept;
 
     void PushFront(const Type& val);
+    void PushBack(const Type& val);
     void Clear() noexcept;
-    [[nodiscard]] size_t GetSize() const noexcept;
+    [[nodiscard]] size_t Size() const noexcept;
     [[nodiscard]] bool IsEmpty() const noexcept;
     void swap(SingleLinkedList& other) noexcept;
 
@@ -237,6 +238,14 @@ void SingleLinkedList<Type>::PushFront(const Type& val) {
 }
 
 template <typename Type>
+void SingleLinkedList<Type>::PushBack(const Type& val) {
+    auto last = cbegin();
+    std::advance(last, Size() - 1);
+    InsertAfter(last, val);
+}
+
+
+template <typename Type>
 void SingleLinkedList<Type>::Clear() noexcept {
     while (head_.next_node != nullptr) {
         Node* tmp = head_.next_node;
@@ -247,7 +256,7 @@ void SingleLinkedList<Type>::Clear() noexcept {
 }
 
 template <typename Type>
-size_t SingleLinkedList<Type>::GetSize() const noexcept {
+size_t SingleLinkedList<Type>::Size() const noexcept {
     return size_;
 }
 
@@ -332,7 +341,7 @@ bool operator==(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>&
     if(lhs.begin() == rhs.begin()) {
         return true;
     }
-    return lhs.GetSize() == rhs.GetSize() &&
+    return lhs.Size() == rhs.Size() &&
            std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 

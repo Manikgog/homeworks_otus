@@ -103,11 +103,11 @@ void TestSingleLinkedList() {
             try {
                 int copy_counter = max_copy_counter;
                 list.InsertAfter(list.cbegin(), ThrowOnCopy(copy_counter));
-                assert(list.GetSize() == 4u);
+                assert(list.Size() == 4u);
             }
             catch (const std::bad_alloc&) {
                 exception_was_thrown = true;
-                assert(list.GetSize() == 3u);
+                assert(list.Size() == 3u);
                 break;
             }
         }
