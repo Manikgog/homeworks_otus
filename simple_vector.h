@@ -1,5 +1,8 @@
 #pragma once
 
+#include <algorithm>
+#include <memory>
+
 template<typename T>
 class Vector {
 public:
@@ -28,20 +31,16 @@ public:
 
         Iterator &operator--(int) {
             Iterator tmp(*this);
-            data_++;
+            data_--;
             return tmp;
         }
 
-        Iterator &operator+(int num) {
-            Iterator it(this->data_ + num);
-            (*this) = it;
-            return *this;
+        Iterator operator+(int num) const {
+            return Iterator(data_ + num);
         }
 
-        Iterator &operator-(int num) {
-            Iterator it(this->data_ - num);
-            (*this) = it;
-            return *this;
+        Iterator operator-(int num) const {
+            return Iterator(data_ - num);
         }
 
         bool operator==(const Iterator &obj) const {
@@ -63,7 +62,8 @@ public:
     Vector() : _capacity(_initial_capacity), _array(new T[_initial_capacity]), _size(0) {
     }
 
-    Vector(const Vector &v) : _capacity(v.size() * static_cast<int>(1.5)), _array(new T[v._size]), _size(v._size) {
+
+    Vector(const Vector &v) : _capacity(v.size() * static_cast<int>(_factor)), _array(new T[v._size]), _size(v._size) {
         for (size_t i = 0; i < _size; i++) {
             _array[i] = v._array[i];
         }
@@ -77,7 +77,7 @@ public:
         std::swap(this->_size, v._size);
     }
 
-    explicit Vector(int size) : _capacity(size * static_cast<int>(1.5)), _array(new T[_capacity]), _size(size) {
+    explicit Vector(int size) : _capacity(size * static_cast<int>(_factor)), _array(new T[_capacity]), _size(size) {
     }
 
     Vector(const std::initializer_list<T> &list) : Vector(list.size()) {
@@ -92,17 +92,38 @@ public:
         this->clear();
     }
 
+    Vector& operator=(Vector&& rhs) {
+        if (this != &rhs) {
+            std::swap(_capacity, rhs._capacity);
+            std::swap(_array, rhs._array);
+            std::swap(_size, rhs._size);
+        }
+        return *this;
+    }
+
+
     Vector &operator=(const Vector &v) {
         if (this != &v) {
-            if (this->_array != nullptr) {
-                delete[] this->_array;
-                this->_array = nullptr;
+            if (v._size > _capacity) {
+                Vector tmp(v);
+                std::swap(_array, tmp._array);
+                std::swap(_size, tmp._size);
+            } else {
+                if (v._size <= _size) {
+                    std::destroy_n(_array + v._size, _size - v._size);
+                }
+
+                size_t to_copy = std::min(_size, v._size);
+                std::copy_n(v._array, to_copy, _array);
+
+                if (v._size > _size) {
+                    std::uninitialized_copy_n(v._array + _size,
+                                            v._size - _size,
+                                            _array + _size);
+                }
+
+                _size = v._size;
             }
-            this->_size = v._size;
-            for (size_t i = 0; i < this->_size; i++) {
-                this->_array[i] = v._array[i];
-            }
-            return *this;
         }
         return *this;
     }
@@ -110,6 +131,7 @@ public:
     void push_back(const T &data) {
         this->_size++;
         if (_size >= _capacity) {
+            _capacity *= _factor;
             T *newArray = new T[_capacity]{};
             for (size_t i = 0; i < this->_size - 1; i++) {
                 newArray[i] = this->_array[i];
@@ -129,6 +151,7 @@ public:
     void insert(const T &data, int index) {
         this->_size++;
         if (this->_size >= this->_capacity) {
+            _capacity *= _factor;
             T *newArray = new T[this->_size]{};
             for (size_t i = 0; i < index; ++i) {
                 newArray[i] = this->_array[i];
@@ -172,19 +195,16 @@ public:
         return _size;
     }
 
-    T &operator[](int i) {
-        return _array[i];
+    T& operator[](int i) {
+        return const_cast<T&>(static_cast<const Vector&>(*this)[i]);
     }
 
     const T &operator[](int i) const {
         return _array[i];
     }
 
-    T &at(int i) {
-        if (i < 0 || i >= _size) {
-            throw 1;
-        }
-        return _array[i];
+    T& at(int i) {
+        return const_cast<T&>(static_cast<const Vector&>(*this).at(i));
     }
 
     const T &at(int i) const {
@@ -232,4 +252,5 @@ private:
     int _capacity;
     T *_array;
     int _size;
+    static constexpr  float _factor = 1.5;
 };

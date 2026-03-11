@@ -37,6 +37,13 @@ int main() {
 	vec.push_back(30);
 	printContainer(vec);
 
+	Vector<int> vec2{10, 20, 30, 40, 50, 60, 70, 80};
+	vec = vec2;
+	printContainer(vec);
+	printContainer(vec2);
+
+
+
 	std::cout << "--------------------------" << std::endl;
 	SingleLinkedList<int> s{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	printContainer(s);
