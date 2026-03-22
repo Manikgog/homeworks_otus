@@ -2,11 +2,21 @@ cmake_minimum_required(VERSION 3.5)
 
 project(07_homework)
 
+# Устанавливаем стандарт C++ для всего проекта
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Общие флаги компиляции для всех целей
+set(COMMON_COMPILE_FLAGS -Wall -Wextra -pedantic -Werror)
+
+# Подключаем Google Test
 add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/googletest"
-    "googletest"
+        "${CMAKE_CURRENT_SOURCE_DIR}/googletest"
+        "${CMAKE_CURRENT_BINARY_DIR}/googletest"
 )
 
+# Исполняемый файл с примерами использования контейнеров
 add_executable(
         containers
         src/main.cpp
@@ -14,53 +24,23 @@ add_executable(
         src/singlelinked_list.h
 )
 
-add_executable(
-        test_vector
-        test/test_vector.cpp
-)
+target_compile_options(containers PRIVATE ${COMMON_COMPILE_FLAGS})
 
 add_executable(
-        test_list
+        containers_tests
+        test/test_vector.cpp
         test/test_singlelinkedlist.cpp
 )
 
 target_include_directories(
-        test_vector PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/src"
-)
-
-target_include_directories(
-        test_list PRIVATE
+        containers_tests PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
 target_link_libraries(
-        test_vector PRIVATE
-        gtest gtest_main
+        containers_tests PRIVATE
+        gtest
+        gtest_main
 )
 
-target_link_libraries(
-        test_list PRIVATE
-        gtest gtest_main
-)
-
-set_target_properties(containers
-        PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
-
-set_target_properties(test_vector
-        PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
-
-target_compile_options(
-        containers PRIVATE
-        -Wall -Wextra -pedantic -Werror
-)
-
-target_compile_options(
-        test_vector PRIVATE
-        -Wall -Wextra -pedantic -Werror
-)
-
-target_compile_options(
-        test_list PRIVATE
-        -Wall -Wextra -pedantic -Werror
-)
+target_compile_options(containers_tests PRIVATE ${COMMON_COMPILE_FLAGS})
