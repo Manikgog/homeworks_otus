@@ -115,7 +115,7 @@ TEST(SingleLinkedList, begin) {
     // Assert
     ASSERT_EQ(*list.begin(), 0);
     ASSERT_FALSE(list.IsEmpty());
-    ASSERT_EQ(*list.begin()++, 1);
+    ASSERT_EQ(*(++list.begin()), 1);
 }
 
 
@@ -141,13 +141,13 @@ TEST(SingleLinkedList, swap) {
     ASSERT_EQ(list1.Size(), 3);
     ASSERT_FALSE(list1.IsEmpty());
     for (size_t i = 0; i < list1.Size(); ++i) {
-        ASSERT_EQ(list1[2], i);
+        ASSERT_EQ(list1[i], (i + 1) * 100);
     }
 
     ASSERT_EQ(list2.Size(), 11);
     ASSERT_FALSE(list2.IsEmpty());
     for (size_t i = 0; i < list2.Size(); ++i) {
-        ASSERT_EQ(list2[2], (i + 1) * 100);
+        ASSERT_EQ(list2[i], i);
     }
 }
 
@@ -167,8 +167,8 @@ TEST(SingleLinkedList, copy_constructor) {
     }
 
     copy.PushBack(100);
-    ASSERT_EQ(original.Size(), 10);
-    ASSERT_EQ(copy.Size(), 11);
+    ASSERT_EQ(original.Size(), 11);
+    ASSERT_EQ(copy.Size(), 12);
     ASSERT_EQ(original[0], copy[0]);
 }
 
@@ -191,7 +191,7 @@ TEST(SingleLinkedList, copy_assignment) {
     }
 
     copy.PushBack(100);
-    ASSERT_EQ(original.Size(), 10);
-    ASSERT_EQ(copy.Size(), 11);
+    ASSERT_EQ(original.Size(), 11);
+    ASSERT_EQ(copy.Size(), 12);
 }
 

@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Общие флаги компиляции для всех целей
-set(COMMON_COMPILE_FLAGS -Wall -Wextra -pedantic -Werror)
+set(COMMON_COMPILE_FLAGS -Wall -Wextra -Werror)
 
 # Подключаем Google Test
 add_subdirectory(

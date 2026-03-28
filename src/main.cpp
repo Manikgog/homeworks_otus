@@ -30,13 +30,21 @@ int main() {
 	// printContainer(source);
 	// printContainer(dest);
 
-	SingleLinkedList<size_t> list{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-	printContainer(list);
-	auto it = list.begin();
-	for (size_t i = 0; i < list.Size()-1; ++i) {
-		it++;
+	SingleLinkedList<size_t> list1{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	SingleLinkedList<size_t> list2{100, 200, 300};
+	// Act
+	list1.swap(list2);
+
+	for (size_t i = 0; i < list1.Size(); ++i) {
+		std::cout << list1[i] << " ";
 	}
-	std::cout << *it << std::endl;
+
+	std::cout << std::endl;
+
+	for (size_t i = 0; i < list2.Size(); ++i) {
+		std::cout << list2[i] << " ";
+	}
+
 
 	return 0;
 }

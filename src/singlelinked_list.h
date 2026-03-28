@@ -240,9 +240,13 @@ void SingleLinkedList<Type>::PushFront(const Type& val) {
 
 template <typename Type>
 void SingleLinkedList<Type>::PushBack(const Type& val) {
-    auto last = cbegin();
-    std::advance(last, Size() - 1);
-    InsertAfter(last, val);
+    if (IsEmpty()) {
+        PushFront(val);  // или InsertAfter(before_begin(), val)
+    } else {
+        auto last = begin();
+        std::advance(last, Size() - 1);
+        InsertAfter(last, val);
+    }
 }
 
 
