@@ -2,8 +2,6 @@
 
 #include "../src/simple_vector.h"
 #include "gtest/gtest.h"
-#include <vector>
-#include <bits/ostream.tcc>
 
 // Вспомогательный класс для отслеживания вызовов деструктора
 class DestructorCounter {
